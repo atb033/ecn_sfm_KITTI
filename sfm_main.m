@@ -16,12 +16,33 @@ for i = 1:numel(imds.Files)
     images{i} = rgb2gray(I);
 end
 
-% Load camera parameters
+%% Load camera parameters
 calib = loadCalibrationCamToCam(fullfile(calib_dir,'calib_cam_to_cam.txt'));
+% Create cameraParameters object from calib
+cameraParam = cameraParameters('IntrinsicMatrix',calib.K{cam});
 
-% Create a View Set Containing the First View
+I = images{1};
 
-% Add the Rest of the Views
+border = 50;
+roi = [border, border, size(I, 2)- 2*border, size(I, 1)- 2*border];
+
+% SUF feature extraction
+prevPoints   = detectSURFFeatures(I, 'NumOctaves', 8, 'ROI', roi);
+prevFeatures = extractFeatures(I, prevPoints, 'Upright', true);
+
+
+%% Create a View Set Containing the First View
+vSet = viewSet;
+
+% Add the first view. Place the camera associated with the first view
+% and the origin, oriented along the Z-axis.
+viewId = 1;
+vSet = addView(vSet, viewId, 'Points', prevPoints, 'Orientation', ...
+    eye(3, 'like', prevPoints.Location), 'Location', ...
+    zeros(1, 3, 'like', prevPoints.Location));
+
+
+%% Add the Rest of the Views
 
 % Display Camera Poses
 
