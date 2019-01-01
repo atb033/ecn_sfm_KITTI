@@ -41,7 +41,7 @@ vSet = addView(vSet, viewId, 'Points', prevPoints, 'Orientation', ...
     eye(3, 'like', prevPoints.Location), 'Location', ...
     zeros(1, 3, 'like', prevPoints.Location));
 
-images = images(1:2:end);
+% images = images(1:100);
 %% Add the Rest of the Views
 for i = 2:numel(images)
     % Detect, extract and match features.
