@@ -16,6 +16,8 @@ for i = 1:numel(imds.Files)
     images{i} = rgb2gray(I);
 end
 
+images = images(9:48);
+
 % Load camera parameters
 calib = loadCalibrationCamToCam(fullfile(calib_dir,'calib_cam_to_cam.txt'));
 % Create cameraParameters object from calib
@@ -41,7 +43,6 @@ vSet = addView(vSet, viewId, 'Points', prevPoints, 'Orientation', ...
     eye(3, 'like', prevPoints.Location), 'Location', ...
     zeros(1, 3, 'like', prevPoints.Location));
 
-images = images(1:2:end);
 %% Add the Rest of the Views
 for i = 2:numel(images)
     % Detect, extract and match features.
@@ -101,7 +102,8 @@ for i = 2:numel(images)
     prevFeatures = currFeatures;
     prevPoints   = currPoints;  
 end
-
+disp(newline)
+disp(' Completed adding view sets')
 %% Display Camera Poses
 % Display the refined camera poses and 3-D world points.
 
@@ -186,7 +188,7 @@ xyzPoints = triangulateMultiview(tracks, camPoses,...
 [xyzPoints, camPoses, reprojectionErrors] = bundleAdjustment(...
     xyzPoints, tracks, camPoses, cameraParams, 'FixedViewId', 1, ...
     'PointsUndistorted', true);
-
+disp('Finished computing dense reconstruction')
 %% Display Dense Reconstruction
 % Display the camera poses and the dense point cloud.
 
@@ -206,7 +208,7 @@ hold off
 
 % Specify the viewing volume.
 loc1 = camPoses.Location{1};
-xlim([loc1(1)-25, loc1(1)+10]);
+xlim([loc1(1)-25, loc1(1)+20]);
 ylim([loc1(2)-5, loc1(2)+4]);
 zlim([loc1(3)-1, loc1(3)+100]);
 camorbit(0, -30);

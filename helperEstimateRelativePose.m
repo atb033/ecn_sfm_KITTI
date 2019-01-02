@@ -38,14 +38,14 @@ if ~isnumeric(matchedPoints2)
     matchedPoints2 = matchedPoints2.Location;
 end
 
-for i = 1
+for i = 1:100
     % Estimate the essential matrix.    
     [E, inlierIdx] = estimateEssentialMatrix(matchedPoints1, matchedPoints2,...
         cameraParams);
 
     % Make sure we get enough inliers
-    if sum(inlierIdx) / numel(inlierIdx) < .3
-%         continue;
+    if sum(inlierIdx) / numel(inlierIdx) < .5
+         continue;
     end
     
     % Get the epipolar inliers.
@@ -62,7 +62,8 @@ for i = 1
     % front of both cameras. If the this fraction is too small, then the
     % fundamental matrix is likely to be incorrect.
     if validPointFraction > .8
-       return;
+        fprintf('Computed essential matrix in %02d attempts',i)
+        return;
     end
 end
 
